@@ -1,19 +1,32 @@
 const fs = require('fs');
+const path = require('path');
 const { Client, GatewayIntentBits, Collection, REST, Routes } = require('discord.js');
 const config = require('./config.json');
 const checkGag = require('./passives/checkGag');
 const currencyHandler = require('./passives/messageCurrency');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildWebhooks, GatewayIntentBits.GuildMessageReactions] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildWebhooks, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildVoiceStates] });
 
 // Collection to store the commands
 client.commands = new Collection();
 
-// Dynamically read and set commands
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.data.name, command);
+// Load commands from main directory and subdirectories
+const commandDirectories = fs.readdirSync('./commands', { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+
+for (const dir of commandDirectories) {
+    const commandFiles = fs.readdirSync(path.join('./commands', dir))
+        .filter(file => file.endsWith('.js'));
+
+    for (const file of commandFiles) {
+        const command = require(path.join(__dirname, './commands', dir, file));
+        if (command.data && command.data.name) {
+            client.commands.set(command.data.name, command);
+        } else {
+            console.error(`Command file ${file} does not have a valid 'data.name' property.`);
+        }
+    }
 }
 
 const registerCommands = async () => {
@@ -45,7 +58,7 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
 
     try {
-        await command.execute(interaction, config.AUTHORIZED_USERS);
+        await command.execute(interaction, client);
     } catch (error) {
         console.error(error);
         await interaction.reply({ content: 'There was an error trying to execute that command!', ephemeral: true });
@@ -53,7 +66,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.on('messageCreate', async message => {
-    // Log message details (from your passive script)
+    // Log message details
     if (message.content) {
         console.log(`Message Received: ${message.author.username}#${message.author.discriminator} - ${message.content}`);
     } else if (message.attachments.size > 0) {
@@ -73,6 +86,20 @@ client.on('messageCreate', async message => {
 
     // If the message isn't from a gagged user, handle the currency addition
     currencyHandler.execute(message);
+});
+
+const Distube = require("distube");
+const YtDlpPlugin = require("@distube/yt-dlp").YtDlpPlugin;
+const SpotifyPlugin = require("@distube/spotify").SpotifyPlugin;
+
+client.distube = new Distube.default(client, {
+    leaveOnEmpty: true,
+    emptyCooldown: 30,
+    leaveOnFinish: false,
+    emitNewSongOnly: true,
+    nsfw: true,
+    youtubeCookie: process.env.ytcookie,
+    plugins: [new SpotifyPlugin(), new YtDlpPlugin()]
 });
 
 client.login(config.token);
