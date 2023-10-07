@@ -1,0 +1,22 @@
+{
+  "name": "ruin-jellyfish",
+  "version": "1.0.0",
+  "description": "An ancient, sentient machine that can help you with everyday tasks.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Luci",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^1.6.5",
+    "@discordjs/rest": "^2.0.1",
+    "discord-api-types": "^0.37.60",
+    "discord.js": "^14.13.0",
+    "sqlite3": "^5.1.6",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {}
+}
