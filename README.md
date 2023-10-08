@@ -21,8 +21,6 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
   
 - **Masturbation Helper**: Well, you know.
   
-- **Music Player**: Play music from Spotify & Youtube.
-  
 - **Reaction Memes**: Reacts to messages at random with memes.
   
 - **Message Logger**: Log all messages as well as deleted messages separately.
@@ -35,7 +33,9 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
 
 ### ✅ Completed:
 
-- **8Ball**: Get answers to your burning questions.
+- **Music Player**: Play music from Spotify & Youtube.
+
+- **Magic Conch**: Will you ever get married?
   
 - **Roll Dice**: Roll a virtual dice!
   
@@ -43,7 +43,7 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
   
 - **Polls**: Create and participate in polls.
   
-- **Special Currency**: Unique currency system.
+- **Special Currency**: Currency system.
 
 ## Getting Started
 
