@@ -1,6 +1,16 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const playPath = 'attachment://play.png';
 const path = require('path');
+const fs = require('fs');
+
+const volumeFilePath = path.join(__dirname, '..', '..', 'database', 'volume_state.json');
+
+function loadVolumeStates() {
+    if (fs.existsSync(volumeFilePath)) {
+        return JSON.parse(fs.readFileSync(volumeFilePath, 'utf8'));
+    }
+    return {};
+}
 
 module.exports = {
     data: {
@@ -30,9 +40,16 @@ module.exports = {
 
         try {
             client.distube.play(voiceChannel, song);
-            await new Promise(r => setTimeout(r, 2000));  // Wait for 2 seconds
+            await new Promise(r => setTimeout(r, 2000));
+
+            client.volumeStates = loadVolumeStates();  // Update client.volumeStates
 
             const queue = client.distube.getQueue(interaction.guild);
+            const guildId = interaction.guild.id;
+            const savedVolume = client.volumeStates[guildId];
+            if (savedVolume) {
+                client.distube.setVolume(interaction.guild, savedVolume);
+            }
             // Get the last song added or the current song if only one song is in the queue.
             const lastSong = queue?.songs[queue.songs.length - 1]?.name || 'Unknown Song';
 

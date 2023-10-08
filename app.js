@@ -7,16 +7,6 @@ const currencyHandler = require('./passives/messageCurrency');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildWebhooks, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildVoiceStates] });
 
-const volumeFilePath = path.join(__dirname, 'volume_state.json');
-
-// Read the volume states from the file
-function loadVolumeStates() {
-    if (fs.existsSync(volumeFilePath)) {
-        return JSON.parse(fs.readFileSync(volumeFilePath, 'utf8'));
-    }
-    return {};
-}
-
 // Collection to store the commands
 client.commands = new Collection();
 
@@ -58,21 +48,6 @@ for (const file of passiveFiles) {
 
 client.once('ready', async () => {
     console.log('Bot is online!');
-
-    // Load volume states into the client object
-    client.volumeStates = loadVolumeStates();
-
-    // Set the volume for each guild based on the loaded volume states
-    for (const [guildId, volume] of Object.entries(client.volumeStates)) {
-        const guild = client.guilds.cache.get(guildId);
-        if (guild) {
-            const queue = client.distube.getQueue(guild);
-            if (queue) {
-                client.distube.setVolume(guild, volume);
-            }
-        }
-    }
-
     await registerCommands();
 });
 
@@ -126,19 +101,5 @@ client.distube = new Distube.default(client, {
     youtubeCookie: process.env.ytcookie,
     plugins: [new SpotifyPlugin(), new YtDlpPlugin()]
 });
-
-client.distube.on("playSong", async (queue, song) => {
-    await new Promise(r => setTimeout(r, 4000))  // Wait for 2 seconds
-    if (!queue || !queue.guild || !queue.guild.id) {
-        console.error('Invalid queue object during playSong event.');
-        return;
-    }
-    const guildId = queue.guild.id;
-    const savedVolume = client.volumeStates[guildId];
-    if (savedVolume) {
-        client.distube.setVolume(queue.guild, savedVolume);
-    }
-});
-
 
 client.login(config.token);

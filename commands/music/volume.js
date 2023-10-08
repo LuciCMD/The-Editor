@@ -47,51 +47,48 @@ module.exports = {
     async execute(interaction, client) {
         const guildId = interaction.guild.id;
         const volumeValue = interaction.options.getInteger('value');
-
+        
         console.log(`Guild ID: ${guildId}`);
         console.log(`Queue:`, client.distube.getQueue(interaction.guild));
-
+        console.log(`Volume Value:`, volumeValue);
+        console.log(`Type of Volume Value:`, typeof volumeValue);
+    
+        // If user just wants to know the current volume (didn't specify a value)
+        if (volumeValue === null || typeof volumeValue === 'undefined') {
+            console.log("Displaying current volume...");  // Debug statement
+            const currentVolume = readVolume(guildId);
+            const embed = new EmbedBuilder()
+                .setTitle(`Volume Status`)
+                .setDescription(`The current volume is: **${currentVolume}%**`)
+                .setThumbnail(volumePath);
+            return await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
+        }
+    
+        // If user wants to set a new volume
         const queue = client.distube.getQueue(interaction.guild);
         if (!queue) {
             const embed = new EmbedBuilder()
                 .setTitle(`Volume Error`)
-                .setDescription(`There is no active music session in this guild.`)
+                .setDescription(`There is no active music session in this guild. Cannot set a new volume without an active session.`)
                 .setThumbnail(volumePath);
             return await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
         }
-
+    
         try {
-            if (typeof volumeValue === 'undefined') {
-                const currentVolume = readVolume(guildId);
-                const embed = new EmbedBuilder()
-                    .setTitle(`Volume Status`)
-                    .setDescription(`The current volume is: **${currentVolume}%**`)
-                    .setThumbnail(volumePath);
-                await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
-            } else {
-                client.distube.setVolume(interaction.guild, volumeValue);
-                writeVolume(guildId, volumeValue);
-                const embed = new EmbedBuilder()
-                    .setTitle(`Volume Changed`)
-                    .setDescription(`Volume set to: **${volumeValue}%**`)
-                    .setThumbnail(volumePath);
-                await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
-            }
+            client.distube.setVolume(interaction.guild, volumeValue);
+            writeVolume(guildId, volumeValue);
+            const embed = new EmbedBuilder()
+                .setTitle(`Volume Changed`)
+                .setDescription(`Volume set to: **${volumeValue}%**`)
+                .setThumbnail(volumePath);
+            await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
         } catch (error) {
             console.error(error);
-            if (error.errorCode === 'NO_QUEUE') {
-                const embed = new EmbedBuilder()
-                    .setTitle(`Volume Error`)
-                    .setDescription(`The bot needs to be playing music for the volume to be changed.`)
-                    .setThumbnail(volumePath);
-                await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
-            } else {
-                const embed = new EmbedBuilder()
-                    .setTitle(`Volume Error`)
-                    .setDescription(`An unexpected error occurred while trying to change the volume.`)
-                    .setThumbnail(volumePath);
-                await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
-            }
+            const embed = new EmbedBuilder()
+                .setTitle(`Volume Error`)
+                .setDescription(`An unexpected error occurred while trying to change the volume.`)
+                .setThumbnail(volumePath);
+            await interaction.reply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'volume.png')] });
         }
     }
 };
