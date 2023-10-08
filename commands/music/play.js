@@ -30,7 +30,25 @@ module.exports = {
 
         try {
             client.distube.play(voiceChannel, song);
-            await interaction.reply(`**Queued** **${song}**`);
+            await new Promise(r => setTimeout(r, 2000));  // Wait for 2 seconds
+
+            const queue = client.distube.getQueue(interaction.guild);
+            // Get the last song added or the current song if only one song is in the queue.
+            const lastSong = queue?.songs[queue.songs.length - 1]?.name || 'Unknown Song';
+
+            let description;
+            if (queue.songs.length === 1) {
+                description = `Now playing: ${lastSong}`;
+            } else {
+                description = `Queued: ${lastSong}`;
+            }
+
+            const embed = new EmbedBuilder()
+                .setTitle(`Play Music`)
+                .setDescription(description)
+                .setThumbnail(playPath);
+            await interaction.reply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+
         } catch (error) {
             console.error(error);
             const embed = new EmbedBuilder()

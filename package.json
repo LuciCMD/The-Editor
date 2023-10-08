@@ -1,6 +1,6 @@
 {
   "name": "ruin-jellyfish",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "description": "An ancient, sentient machine that can help you with everyday tasks.",
   "main": "app.js",
   "scripts": {
