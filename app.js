@@ -11,9 +11,9 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 client.commands = new Collection();
 
 // Load commands from main directory and subdirectories
-const commandDirectories = fs.readdirSync('./commands', { withFileTypes: true })
+const commandDirectories = ['.', ...fs.readdirSync('./commands', { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+    .map(dirent => dirent.name)];
 
 for (const dir of commandDirectories) {
     const commandFiles = fs.readdirSync(path.join('./commands', dir))
