@@ -20,6 +20,7 @@
     "discord-api-types": "^0.37.60",
     "discord.js": "^14.13.0",
     "distube": "^4.1.0",
+    "genius-lyrics": "^4.4.6",
     "sqlite3": "^5.1.6",
     "tweetnacl": "^1.0.3",
     "ytdl-core": "^4.11.5"
