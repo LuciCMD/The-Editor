@@ -30,12 +30,14 @@ module.exports = {
         const song = interaction.options.getString('song');
         const voiceChannel = interaction.member.voice.channel;
 
+        await interaction.deferReply(); // Immediate acknowledgment
+
         if (!voiceChannel) {
             const embed = new EmbedBuilder()
                 .setTitle(`Play Music`)
                 .setDescription(`You need to be in a voice channel to play music!`)
                 .setThumbnail(playPath);
-            return interaction.reply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            return interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
         }
 
         try {
@@ -64,7 +66,7 @@ module.exports = {
                 .setTitle(`Play Music`)
                 .setDescription(description)
                 .setThumbnail(playPath);
-            await interaction.reply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            await interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
 
         } catch (error) {
             console.error(error);
@@ -72,7 +74,7 @@ module.exports = {
                 .setTitle(`Play Music`)
                 .setDescription(`Error occurred while trying to play the song.`)
                 .setThumbnail(playPath);
-            await interaction.reply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            await interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
         }
     }
 };
