@@ -91,6 +91,16 @@ client.on('messageCreate', async message => {
 const Distube = require("distube");
 const YtDlpPlugin = require("@distube/yt-dlp").YtDlpPlugin;
 const SpotifyPlugin = require("@distube/spotify").SpotifyPlugin;
+const proxies = require('./proxies.json');
+
+// Function to get a random proxy from the list
+function getRandomProxy() {
+    const randomIndex = Math.floor(Math.random() * proxies.length);
+    return proxies[randomIndex];
+}
+
+const randomProxyUrl = getRandomProxy(); // Get a random proxy URL
+console.log(`Using proxy: ${randomProxyUrl}`);
 
 client.distube = new Distube.default(client, {
     leaveOnEmpty: true,
@@ -99,7 +109,11 @@ client.distube = new Distube.default(client, {
     emitNewSongOnly: true,
     nsfw: true,
     youtubeCookie: process.env.ytcookie,
-    plugins: [new SpotifyPlugin(), new YtDlpPlugin()]
+    plugins: [new SpotifyPlugin(), new YtDlpPlugin({
+        requestOptions: {
+            proxy: randomProxyUrl,
+        },
+    })]
 });
 
 client.login(config.token);
