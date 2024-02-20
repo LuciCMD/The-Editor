@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { AUTHORIZED_USERS } = require('../config.json');
 
 module.exports = {
     data: {
@@ -21,7 +22,11 @@ module.exports = {
         ]
     },
 
-    async execute(interaction, AUTHORIZED_USERS) {
+    async execute(interaction) {
+        console.log('AUTHORIZED_USERS:', AUTHORIZED_USERS); // Debugging line
+        console.log('Type of AUTHORIZED_USERS:', typeof AUTHORIZED_USERS); // Debugging line
+        console.log('Interaction User ID:', interaction.user.id); // Debugging line
+
         if (!AUTHORIZED_USERS.includes(interaction.user.id)) {
             await interaction.reply({ content: "You are not authorized to use this command.", ephemeral: true });
             return;
@@ -39,7 +44,7 @@ module.exports = {
 
         const dbPath = path.join(__dirname, '..', 'database', 'currency_db.sqlite');
         const db = new sqlite3.Database(dbPath);
-    
+
         db.get("SELECT balance FROM currency WHERE user_id=?", [user_id], (err, row) => {
             if (err) {
                 console.error(err);

@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { Client, GatewayIntentBits, Collection, REST, Routes } = require('discord.js');
 const config = require('./config.json');
-const checkGag = require('./passives/checkGag');
+const messageLogger = require('./passives/messageLogger');
+const checkAndReplaceBannedWords = require('./passives/checkGag');
 const currencyHandler = require('./passives/messageCurrency');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildWebhooks, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildVoiceStates] });
@@ -77,14 +78,17 @@ client.on('messageCreate', async message => {
         console.log(`Message from ${message.author.username}#${message.author.discriminator} received without text content.`);
     }
 
-    // Handle the gag check
-    const wasGagged = await checkGag(message.author, message.channel, message);
-    if (wasGagged) {
-        // If the message was from a gagged user, return early
-        return;
+    // Save message to file
+    try {
+        await messageLogger(message);
+    } catch (error) {
+        console.error('Error logging message:', error);
     }
 
-    // If the message isn't from a gagged user, handle the currency addition
+    // Check for banned words and gags
+    await checkAndReplaceBannedWords(message.author, message.channel, message);
+
+    // If the message isn't from a gagged or banned word user, handle the currency addition
     currencyHandler.execute(message);
 });
 

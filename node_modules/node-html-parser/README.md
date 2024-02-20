@@ -202,7 +202,7 @@ Note: Full range of CSS3 selectors supported since v3.0.0.
 
 ### querySelector(selector)
 
-Query CSS Selector to find matching node.
+Query CSS Selector to find matching node. `null` if not found.
 
 ### getElementsByTagName(tagName)
 
@@ -212,7 +212,7 @@ Note: Use * for all elements.
 
 ### closest(selector)
 
-Query closest element by css selector.
+Query closest element by css selector. `null` if not found.
 
 ### appendChild(node)
 
@@ -236,7 +236,7 @@ Remove `key` attribute.
 
 ### getAttribute(key: string)
 
-Get `key` attribute.
+Get `key` attribute. `undefined` if not set.
 
 ### exchangeChild(oldNode: Node, newNode: Node)
 
@@ -292,7 +292,7 @@ Get class names.
 
 Clone a node.
 
-#### getElementById(id: string): HTMLElement
+#### getElementById(id: string): HTMLElement | null
 
 Get element by it's ID.
 
@@ -322,11 +322,11 @@ Get DOM structure.
 
 ### firstChild
 
-Get first child node.
+Get first child node. `undefined` if no child.
 
 ### lastChild
 
-Get last child node.
+Get last child node. `undefined` if no child
 
 ### innerHTML
 
@@ -338,19 +338,19 @@ Get outerHTML.
 
 ### nextSibling
 
-Returns a reference to the next child node of the current element's parent.
+Returns a reference to the next child node of the current element's parent. `null` if not found.
 
 ### nextElementSibling
 
-Returns a reference to the next child element of the current element's parent.
+Returns a reference to the next child element of the current element's parent. `null` if not found.
 
 ### previousSibling
 
-Returns a reference to the previous child node of the current element's parent.
+Returns a reference to the previous child node of the current element's parent. `null` if not found.
 
 ### previousElementSibling
 
-Returns a reference to the previous child element of the current element's parent.
+Returns a reference to the previous child element of the current element's parent. `null` if not found.
 
 ### textContent
 

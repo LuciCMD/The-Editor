@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { AUTHORIZED_USERS } = require('../config.json');
 
 // Helper function to parse the duration
 function parseDuration(durationStr) {
@@ -45,7 +46,11 @@ module.exports = {
         ]
     },
 
-    async execute(interaction, AUTHORIZED_USERS) {
+    async execute(interaction) {
+        console.log('AUTHORIZED_USERS:', AUTHORIZED_USERS); // Debugging line
+        console.log('Type of AUTHORIZED_USERS:', typeof AUTHORIZED_USERS); // Debugging line
+        console.log('Interaction User ID:', interaction.user.id); // Debugging line
+
         if (!AUTHORIZED_USERS.includes(interaction.user.id)) {
             await interaction.reply({ content: "You are not authorized to use this command.", ephemeral: true });
             return;
@@ -69,25 +74,25 @@ module.exports = {
         const db = new sqlite3.Database(dbPath);
 
         // Save to the database
-        db.run("INSERT OR REPLACE INTO gags (user_id, type, end_time, reason) VALUES (?, ?, ?, ?)", 
-               [user.id, type, endTime, reason], (err) => {
-            if (err) {
-                console.error(err);
-                interaction.reply({ content: "An error occurred while updating the database.", ephemeral: true });
-                return;
-            }
+        db.run("INSERT OR REPLACE INTO gags (user_id, type, end_time, reason) VALUES (?, ?, ?, ?)",
+            [user.id, type, endTime, reason], (err) => {
+                if (err) {
+                    console.error(err);
+                    interaction.reply({ content: "An error occurred while updating the database.", ephemeral: true });
+                    return;
+                }
 
-            const embed = new EmbedBuilder()
-                .setTitle("Gag Information")
-                .setDescription(`${memberName} has been gagged`)
-                .setColor(0xFF5733)
-                .addFields(
-                    { name: "🕰 Duration", value: duration, inline: true },
-                    { name: "🚨 Reason", value: reason || "No reason provided", inline: true },
-                    { name: "🤐 Gag Type", value: type, inline: true }
-                );
+                const embed = new EmbedBuilder()
+                    .setTitle("Gag Information")
+                    .setDescription(`${memberName} has been gagged`)
+                    .setColor(0xFF5733)
+                    .addFields(
+                        { name: "🕰 Duration", value: duration, inline: true },
+                        { name: "🚨 Reason", value: reason || "No reason provided", inline: true },
+                        { name: "🤐 Gag Type", value: type, inline: true }
+                    );
 
-            interaction.reply({ embeds: [embed] });
-        });
+                interaction.reply({ embeds: [embed] });
+            });
     }
 };

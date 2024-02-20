@@ -35,7 +35,7 @@ module.exports = {
         if (!voiceChannel) {
             const embed = new EmbedBuilder()
                 .setTitle(`Play Music`)
-                .setDescription(`You need to be in a voice channel to play music!`)
+                .setDescription(`You need to be in a voice channel to play music! (That means you Jade!)`)
                 .setThumbnail(playPath);
             return interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
         }

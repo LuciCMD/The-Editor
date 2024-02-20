@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const Genius = require('genius-lyrics');
-const TOKEN = '';
+const TOKEN = 'r6qXYaILlQPJ7YaudAkI7RgmeIV2SwCE_XFifl5iexl-AL5Xa_MWyPRL-_iL_7bU';
 const Client = new Genius.Client(TOKEN);
 
 function cleanSongName(songName) {

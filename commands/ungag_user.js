@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { AUTHORIZED_USERS } = require('../config.json');
 
 const dbPath = path.join(__dirname, '..', 'database', 'gags_db.sqlite');
 const db = new sqlite3.Database(dbPath);
@@ -18,11 +19,15 @@ module.exports = {
         ]
     },
 
-    async execute(interaction, AUTHORIZED_USERS) {
+
+    async execute(interaction) {
         const user = interaction.options.getUser('user');
+        console.log('AUTHORIZED_USERS:', AUTHORIZED_USERS); // Debugging line
+        console.log('Type of AUTHORIZED_USERS:', typeof AUTHORIZED_USERS); // Debugging line
+        console.log('Interaction User ID:', interaction.user.id); // Debugging line
 
         if (!AUTHORIZED_USERS.includes(interaction.user.id)) {
-            await interaction.reply("You are not authorized to use this command.");
+            await interaction.reply({ content: "You are not authorized to use this command.", ephemeral: true });
             return;
         }
 
@@ -41,7 +46,7 @@ module.exports = {
 
             if (row) {
                 // User is gagged, now remove them from the database
-                db.run("DELETE FROM gags WHERE user_id=?", [user.id], function(err) {
+                db.run("DELETE FROM gags WHERE user_id=?", [user.id], function (err) {
                     if (err) {
                         console.error(err);
                         return interaction.reply("There was an error ungagging the user.");
