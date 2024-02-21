@@ -1,5 +1,3 @@
-![Ruin Jellyfish](./art/RuinJellyfish.png)
-
 # Ruin Jellyfish Discord Bot 🌌
 
 I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of features to enhance your Discord experience!
