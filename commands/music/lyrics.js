@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const Genius = require('genius-lyrics');
-const TOKEN = 'r6qXYaILlQPJ7YaudAkI7RgmeIV2SwCE_XFifl5iexl-AL5Xa_MWyPRL-_iL_7bU';
-const Client = new Genius.Client(TOKEN);
+const config = require('../../config.json'); // Ensure this path is correct relative to this file
+const Client = new Genius.Client(config.geniusToken); // Use the token from the config
 
 function cleanSongName(songName) {
     return songName
@@ -40,7 +40,7 @@ module.exports = {
             const chunks = lyrics.match(/[\s\S]{1,2048}/g);
 
             for (const chunk of chunks) {
-                interaction.reply({ content: chunk });
+                await interaction.reply({ content: chunk });
             }
 
         } catch (error) {
