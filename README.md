@@ -1,5 +1,3 @@
-![Ruin Jellyfish](./art/RuinJellyfish.png)
-
 # Ruin Jellyfish Discord Bot 🌌
 
 I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of features to enhance your Discord experience!
@@ -23,8 +21,6 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
   
 - **Reaction Memes**: Reacts to messages at random with memes.
   
-- **Message Logger**: Log all messages as well as deleted messages separately.
-  
 - **Gacha System**: Engage in a fun Gacha game and collect unique items.
   
 - **News**:
@@ -45,14 +41,9 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
   
 - **Special Currency**: Currency system.
 
-## Getting Started
+- **Countdown**: Create a countdown to the specified time. Updates every second.
 
-1. Invite the bot to your server using [this link]([#](https://discord.com/api/oauth2/authorize?client_id=1082783458012708875&permissions=8&scope=bot)).
-2. Use `/help` to see a list of available commands.
-
-## Contribution
-
-If you'd like to contribute or suggest more features, feel free to open an issue or a pull request.
+- **Message Logger**: Log all messages and attachments. Creates a folder with the same name as the corresponding guild (logs/guildname).
 
 ## License
 
