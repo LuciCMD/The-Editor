@@ -7,7 +7,7 @@ module.exports = {
         options: [
             {
                 name: 'sides',
-                type: 4,  // INTEGER type
+                type: 4,  // INTEGER
                 description: 'Number of sides on the dice (default is 6)',
                 required: false
             }

@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder } = require('@discordjs/builders');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { AUTHORIZED_USERS } = require('../config.json');
@@ -21,25 +21,25 @@ module.exports = {
         options: [
             {
                 name: 'user',
-                type: 6,  // USER type
+                type: 6,  // USER
                 description: 'User to gag',
                 required: true
             },
             {
                 name: 'type',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'Type of gag (e.g. cricket, dog, cat, ...)',
                 required: true
             },
             {
                 name: 'duration',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'Duration of the gag (e.g. 1h30m)',
                 required: true
             },
             {
                 name: 'reason',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'Reason for the gag',
                 required: false
             }

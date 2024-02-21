@@ -37,7 +37,7 @@ module.exports = {
         options: [
             {
                 name: 'value',
-                type: 4,
+                type: 4, // INTEGER
                 description: 'The volume value you want to set (0-100).',
                 required: false
             }

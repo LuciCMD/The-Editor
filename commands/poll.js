@@ -7,13 +7,13 @@ module.exports = {
         options: [
             {
                 name: 'question',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'The poll question',
                 required: true
             },
             {
                 name: 'options',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'Options for the poll separated by commas (e.g. option1,option2,option3)',
                 required: true
             }

@@ -12,7 +12,7 @@ module.exports = {
         options: [
             {
                 name: 'user',
-                type: 6,  // USER type
+                type: 6,  // USER
                 description: 'User to ungag',
                 required: true
             }

@@ -7,7 +7,7 @@ module.exports = {
         options: [
             {
                 name: 'question',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'The question to ask the magic conch',
                 required: true
             }

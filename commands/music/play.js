@@ -19,7 +19,7 @@ module.exports = {
         options: [
             {
                 name: 'song',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'The URL or name of the song you want to play.',
                 required: true
             }

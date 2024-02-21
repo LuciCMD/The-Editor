@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder } = require('@discordjs/builders');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { AUTHORIZED_USERS } = require('../config.json');
@@ -10,13 +10,13 @@ module.exports = {
         options: [
             {
                 name: 'user',
-                type: 6,  // USER type
+                type: 6,  // USER
                 description: 'User to ban the word for',
                 required: true
             },
             {
                 name: 'word',
-                type: 3,  // STRING type
+                type: 3,  // STRING
                 description: 'Word to ban',
                 required: true
             }

@@ -9,13 +9,13 @@ module.exports = {
         options: [
             {
                 name: 'user',
-                type: 6,  // USER type
+                type: 6,  // USER
                 description: 'User to add currency to',
                 required: true
             },
             {
                 name: 'amount',
-                type: 10,  // NUMBER type
+                type: 10,  // NUMBER
                 description: 'Amount of currency to add',
                 required: true
             }

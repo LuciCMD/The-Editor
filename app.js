@@ -24,6 +24,7 @@ for (const dir of commandDirectories) {
         const command = require(path.join(__dirname, './commands', dir, file));
         if (command.data && command.data.name) {
             client.commands.set(command.data.name, command);
+            console.log(`Loading command: ${command.data.name}`);
         } else {
             console.error(`Command file ${file} does not have a valid 'data.name' property.`);
         }
@@ -120,4 +121,5 @@ client.distube = new Distube.default(client, {
     })]
 });
 
+console.log('Ruin Jellyfish start sequence completed.');
 client.login(config.token);
