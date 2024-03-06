@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('@discordjs/builders');
+const { ChannelType } = require('discord-api-types/v10');
 const { AUTHORIZED_USERS } = require('../config.json');
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
         }
 
         const endTimeString = interaction.options.getString('endtime');
-        const endTime = Date.parse(endTimeString + ':00Z'); // Adding seconds and Z to indicate UTC
+        const endTime = Date.parse(endTimeString + ':00Z'); // Adjust for UTC
         if (isNaN(endTime)) {
             await interaction.reply({ content: "Invalid time format. Please use YYYY-MM-DD HH:MM format in UTC.", ephemeral: true });
             return;
@@ -34,30 +35,33 @@ module.exports = {
             return;
         }
 
-        const countdownEmbed = new EmbedBuilder()
+        let countdownEmbed = new EmbedBuilder()
             .setTitle("Countdown Timer")
             .setDescription(`Countdown to ${endTimeString} (UTC)`)
             .addFields({ name: "Time Left", value: "Calculating..." })
             .setColor(0xFF5733);
 
-        const message = await interaction.reply({ embeds: [countdownEmbed], fetchReply: true });
+        let message;
+        // Try sending the message directly to the channel to avoid interaction token expiration issues
+        if (interaction.channel.type === ChannelType.GuildText) {
+            message = await interaction.channel.send({ embeds: [countdownEmbed] });
+        } else {
+            // For non-guild channels, fall back to replying to the interaction
+            message = await interaction.reply({ embeds: [countdownEmbed], fetchReply: true });
+        }
 
-        // Update countdown every second
+        // Update countdown every 2 seconds
         const interval = setInterval(async () => {
             const now = Date.now();
             if (endTime <= now) {
                 clearInterval(interval);
                 countdownEmbed.setDescription(`The countdown to ${endTimeString} (UTC) has ended!`);
                 countdownEmbed.setFields({ name: "Time Left", value: `0h 0m 0s` });
-                try {
-                    await interaction.editReply({ embeds: [countdownEmbed] });
-                } catch (error) {
-                    console.error('Failed to edit message: ', error);
-                }
+                message.edit({ embeds: [countdownEmbed] }).catch(console.error);
                 return;
             }
 
-            let delta = endTime - now; // Difference in milliseconds
+            let delta = endTime - now;
             let hours = Math.floor(delta / (1000 * 60 * 60));
             delta -= hours * (1000 * 60 * 60);
             let minutes = Math.floor(delta / (1000 * 60));
@@ -65,16 +69,14 @@ module.exports = {
             let seconds = Math.floor(delta / (1000));
 
             countdownEmbed.setFields({ name: "Time Left", value: `${hours}h ${minutes}m ${seconds}s` });
-            try {
-                await interaction.editReply({ embeds: [countdownEmbed] });
-            } catch (error) {
-                if (error.code === 10008) { // "Unknown Message" error
+            message.edit({ embeds: [countdownEmbed] }).catch(error => {
+                if (error.code === 10008) { // "Unknown Message"
                     console.error('Message was deleted. Stopping the countdown.');
-                    clearInterval(interval); // Stop the countdown if the message was deleted.
+                    clearInterval(interval);
                 } else {
                     console.error('Failed to edit message: ', error);
                 }
-            }
-        }, 1000);
+            });
+        }, 2000); // Update frequency set to 2 seconds
     }
 };
