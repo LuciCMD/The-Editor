@@ -32,9 +32,9 @@ for (const dir of commandDirectories) {
 }
 
 const registerCommands = async () => {
-    const data = new REST({ version: '10' }).setToken(config.token);
+    const rest = new REST({ version: '10' }).setToken(config.token);
 
-    await data.put(Routes.applicationCommands(client.user.id), {
+    await rest.put(Routes.applicationCommands(client.user.id), {
         body: client.commands.map(cmd => cmd.data)
     });
 };
@@ -122,4 +122,7 @@ client.distube = new Distube.default(client, {
 });
 
 console.log('Ruin Jellyfish start sequence completed.');
-client.login(config.token);
+client.login(config.token).catch(error => {
+    console.error('Login error:', error);
+    process.exit(1);
+});
