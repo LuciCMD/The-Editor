@@ -1,17 +1,12 @@
 const { EmbedBuilder } = require('@discordjs/builders');
 const Genius = require('genius-lyrics');
-const config = require('../../config.json'); // Ensure this path is correct relative to this file
-const Client = new Genius.Client(config.geniusToken); // Use the token from the config
+const config = require('../../config.json');
+const Client = new Genius.Client(config.geniusToken);
 
-function cleanSongName(songName) {
-    return songName
-        .replace(/\[Official Video\]/gi, '')
-        .replace(/\[Lyric Video\]/gi, '')
-        .replace(/\[Official Audio\]/gi, '')
-        .replace(/\[Official Music Video\]/gi, '')
-        .replace(/\[MV\]/gi, '')
+const cleanSongName = (songName) =>
+    songName
+        .replace(/\[(Official Video|Lyric Video|Official Audio|Official Music Video|MV)\]/gi, '')
         .trim();
-}
 
 module.exports = {
     data: {
@@ -27,25 +22,29 @@ module.exports = {
 
         const songName = queue.songs[0].name;
         const cleanedSongName = cleanSongName(songName);
-        
+
         try {
             const songs = await Client.songs.search(cleanedSongName);
-            const lyrics = await songs[0].lyrics();
-            
-            if (!lyrics) {
-                return interaction.reply(`Sorry, I couldn't fetch the lyrics for ${songName}.`);
+            const song = songs[0];
+
+            if (!song) {
+                return interaction.reply(`Sorry, I couldn't find the song "${songName}".`);
             }
 
-            // Split the lyrics into manageable sections if they're too long for a single Discord message
-            const chunks = lyrics.match(/[\s\S]{1,2048}/g);
+            const lyrics = await song.lyrics();
+
+            if (!lyrics) {
+                return interaction.reply(`Sorry, I couldn't fetch the lyrics for "${songName}".`);
+            }
+
+            const chunks = lyrics.match(/[\s\S]{1,4096}/g);
 
             for (const chunk of chunks) {
                 await interaction.reply({ content: chunk });
             }
-
         } catch (error) {
-            console.error(error);
-            return interaction.reply(`There was an error trying to fetch the lyrics for ${songName}.`);
+            console.error(`Error fetching lyrics for "${songName}":`, error);
+            return interaction.reply(`There was an error trying to fetch the lyrics for "${songName}".`);
         }
-    }
+    },
 };

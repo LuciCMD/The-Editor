@@ -6,8 +6,12 @@ const fs = require('fs');
 const volumeFilePath = path.join(__dirname, '..', '..', 'database', 'volume_state.json');
 
 function loadVolumeStates() {
-    if (fs.existsSync(volumeFilePath)) {
-        return JSON.parse(fs.readFileSync(volumeFilePath, 'utf8'));
+    try {
+        if (fs.existsSync(volumeFilePath)) {
+            return JSON.parse(fs.readFileSync(volumeFilePath, 'utf8'));
+        }
+    } catch (error) {
+        console.error('Error loading volume states:', error);
     }
     return {};
 }
@@ -52,15 +56,9 @@ module.exports = {
             if (savedVolume) {
                 client.distube.setVolume(interaction.guild, savedVolume);
             }
-            // Get the last song added or the current song if only one song is in the queue.
-            const lastSong = queue?.songs[queue.songs.length - 1]?.name || 'Unknown Song';
 
-            let description;
-            if (queue.songs.length === 1) {
-                description = `Now playing: ${lastSong}`;
-            } else {
-                description = `Queued: ${lastSong}`;
-            }
+            const lastSong = queue?.songs[queue.songs.length - 1]?.name || 'Unknown Song';
+            const description = queue.songs.length === 1 ? `Now playing: ${lastSong}` : `Queued: ${lastSong}`;
 
             const embed = new EmbedBuilder()
                 .setTitle(`Play Music`)
@@ -69,7 +67,7 @@ module.exports = {
             await interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
 
         } catch (error) {
-            console.error(error);
+            console.error('Error playing song:', error);
             const embed = new EmbedBuilder()
                 .setTitle(`Play Music`)
                 .setDescription(`Error occurred while trying to play the song.`)
