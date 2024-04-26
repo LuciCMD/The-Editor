@@ -24,15 +24,10 @@ module.exports = {
     },
 
     async execute(interaction) {
-        console.log('AUTHORIZED_USERS:', AUTHORIZED_USERS); // Debugging line
-        console.log('Type of AUTHORIZED_USERS:', typeof AUTHORIZED_USERS); // Debugging line
-        console.log('Interaction User ID:', interaction.user.id); // Debugging line
-
         if (!AUTHORIZED_USERS.includes(interaction.user.id)) {
             await interaction.reply({ content: "You are not authorized to use this command.", ephemeral: true });
             return;
         }
-
 
         const user = interaction.options.getUser('user');
         const word = interaction.options.getString('word');
@@ -41,22 +36,21 @@ module.exports = {
         const db = new sqlite3.Database(dbPath);
 
         // Save to the database
-        db.run("INSERT INTO banned_words (user_id, word) VALUES (?, ?)",
-            [user.id, word], (err) => {
-                if (err) {
-                    console.error(err);
-                    interaction.reply({ content: "An error occurred while updating the database.", ephemeral: true });
-                    return;
-                }
+        db.run("INSERT INTO banned_words (user_id, word) VALUES (?, ?)", [user.id, word], (err) => {
+            db.close(); // Close the database connection
 
-                const embed = new EmbedBuilder()
-                    .setTitle("Word Ban Information")
-                    .setDescription(`The word "${word}" has been banned for ${user.username}.`)
-                    .setColor(0xFF5733);
+            if (err) {
+                console.error('Error updating the database:', err);
+                interaction.reply({ content: "An error occurred while updating the database.", ephemeral: true });
+                return;
+            }
 
-                interaction.reply
+            const embed = new EmbedBuilder()
+                .setTitle("Word Ban Information")
+                .setDescription(`The word "${word}" has been banned for ${user.username}.`)
+                .setColor(0xFF5733);
 
-                    ({ embeds: [embed] });
-            });
+            interaction.reply({ embeds: [embed] });
+        });
     }
 };
