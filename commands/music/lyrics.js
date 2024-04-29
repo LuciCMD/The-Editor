@@ -35,24 +35,29 @@ module.exports = {
         const cleanedSongName = cleanSongName(songName);
 
         try {
-            const songs = await geniusClient.songs.search(cleanedSongName);
-            const song = songs[0];
+            const searches = await geniusClient.songs.search(cleanedSongName);
 
-            if (!song) {
-                return interaction.reply(`Sorry, I couldn't find the song "${songName}".`);
+            if (searches.length === 0) {
+                return interaction.reply(`Sorry, I couldn't find the lyrics for "${songName}".`);
             }
 
-            const lyrics = await song.lyrics();
+            const song = searches[0];
+            const lyrics = await song.lyrics(false);
 
             if (!lyrics) {
                 return interaction.reply(`Sorry, I couldn't fetch the lyrics for "${songName}".`);
             }
 
-            const chunks = lyrics.match(/[\s\S]{1,4096}/g);
-
-            for (const chunk of chunks) {
-                await interaction.reply({ content: chunk });
+            if (lyrics.length > 2000) {
+                const lyricsUrl = song.url;
+                return interaction.reply(`The lyrics for "${songName}" exceed the character limit. You can find them at: ${lyricsUrl}`);
             }
+
+            const embed = new EmbedBuilder()
+                .setTitle(`Lyrics for "${songName}"`)
+                .setDescription(lyrics);
+
+            await interaction.reply({ embeds: [embed] });
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 // Access token expired, refresh the token and retry
