@@ -57,8 +57,8 @@ module.exports = {
                 client.distube.setVolume(interaction.guild, savedVolume);
             }
 
-            const lastSong = queue?.songs[queue.songs.length - 1]?.name || 'Unknown Song';
-            const description = queue.songs.length === 1 ? `Now playing: ${lastSong}` : `Queued: ${lastSong}`;
+            const lastSong = queue && queue.songs && queue.songs.length > 0 ? queue.songs[queue.songs.length - 1].name : 'Unknown Song';
+            const description = queue && queue.songs ? (queue.songs.length === 1 ? `Now playing: ${lastSong}` : `Queued: ${lastSong}`) : 'Playing song...';
 
             const embed = new EmbedBuilder()
                 .setTitle(`Play Music`)
