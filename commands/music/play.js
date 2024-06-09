@@ -41,7 +41,7 @@ module.exports = {
                 .setTitle(`Play Music`)
                 .setDescription(`You need to be in a voice channel to play music! (That means you Jade!)`)
                 .setThumbnail(playPath);
-            return interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            return interaction.editReply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')] });
         }
 
         try {
@@ -64,7 +64,7 @@ module.exports = {
                 .setTitle(`Play Music`)
                 .setDescription(description)
                 .setThumbnail(playPath);
-            await interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            await interaction.editReply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')] });
 
         } catch (error) {
             console.error('Error playing song:', error);
@@ -72,7 +72,7 @@ module.exports = {
                 .setTitle(`Play Music`)
                 .setDescription(`Error occurred while trying to play the song.`)
                 .setThumbnail(playPath);
-            await interaction.editReply({embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')]});
+            await interaction.editReply({ embeds: [embed], files: [path.join(__dirname, '..', '..', 'assets', 'play.png')] });
         }
     }
 };
