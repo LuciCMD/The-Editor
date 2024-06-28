@@ -43,8 +43,18 @@ const registerCommands = async () => {
 const passiveFiles = fs.readdirSync('./passives').filter(file => file.endsWith('.js'));
 for (const file of passiveFiles) {
     const passive = require(`./passives/${file}`);
-    if (passive.name && typeof passive.execute === "function" && passive.name !== 'messageCreate') {
-        client.on(passive.name, passive.execute);
+    if (passive.name && typeof passive.execute === "function") {
+        if (passive.name === 'messageCreate') {
+            client.on(passive.name, async (message) => {
+                try {
+                    await passive.execute(message, client);
+                } catch (error) {
+                    console.error(`Error in ${file}:`, error);
+                }
+            });
+        } else {
+            client.on(passive.name, passive.execute);
+        }
     }
 }
 

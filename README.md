@@ -1,6 +1,6 @@
-# Ruin Jellyfish Discord Bot 🌌
+# The Editor - A Discord Bot 🌌
 
-I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of features to enhance your Discord experience!
+I aim to provide a multitude of features to enhance your Discord experience!
 
 ## Features
 
@@ -14,10 +14,6 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
   - Bunny
   - Hamster
   - Mute
-  
-- **Food To Eat**: Get suggestions on what to eat next!
-  
-- **Masturbation Helper**: Well, you know.
   
 - **Reaction Memes**: Reacts to messages at random with memes.
   
@@ -44,6 +40,10 @@ I'm a friendly Ruin Jellyfish Discord Bot. I aim to provide a multitude of featu
 - **Countdown**: Create a countdown to the specified time. Updates every second.
 
 - **Message Logger**: Log all messages and attachments. Creates a folder with the same name as the corresponding guild (logs/guildname).
+
+- **VirusTotal Scan**: Scan for malicious URLs. VirusTotal API key must be set in config.json. Tenor is ignored.
+
+- **Lyric Search**: Search for lyrics for the currently playing song. Genius API key must be set in config.json.
 
 ## License
 

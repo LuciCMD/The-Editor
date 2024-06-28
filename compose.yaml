@@ -14,7 +14,7 @@ services:
     container_name: Periwinkle # Set custom container name
     volumes:
       - db-data:/usr/src/app/database # Named volume for the database directory
-      - log-data:/usr/src/app/log # Named volume for the log directory
+      - log-data:/usr/src/app/logs # Named volume for the log directory
 
   # Example of defining a PostgreSQL database service
   # Uncomment the following lines to use a PostgreSQL database with your application
