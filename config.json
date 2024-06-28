@@ -1,5 +1,6 @@
 {
     "token": "YOUR_BOT_TOKEN_HERE",
     "geniusToken": "YOUR_GENIUS_TOKEN_HERE",
-    "AUTHORIZED_USERS": ["USER1ID", "USER2ID"]
-}
+    "AUTHORIZED_USERS": ["USER1ID", "USER2ID"],
+    "virusTotalApiKey": "YOUR_VIRUSTOTAL_API_KEY_HERE"
+  }
