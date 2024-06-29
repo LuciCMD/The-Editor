@@ -50,7 +50,11 @@ async function checkAndReplaceBannedWords(author, channel, message) {
             const replacements = {
                 "cricket": ["Chirp... Chirp...", "chiiirp chirp chirp", "CHIRP CHIRP CHIIIIIIIRP"],
                 "dog": ["Woof!", "Bark bark!", "Woof woof!"],
-                // ... other replacements ...
+                "cat": ["Meow!", "Meow meow!", "Mow mow!", "Meow meow meow!", "Meow meow meow meow?", "meow mow"],
+                "pokemon": ["Pika!", "Pika pika!", "pika pika pika", "pika pika?!"],
+                "bunny": ["Hop hop!", "hop?", "it's not because you're a rabbit, it's because you're black"],
+                "hamster": ["Squeek!", "squeek", "Squeeeeeek..."],
+                "mute": [":zipper_mouth:"]
             };
 
             messageContent = replacements[type][Math.floor(Math.random() * replacements[type].length)];

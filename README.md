@@ -5,19 +5,8 @@ I aim to provide a multitude of features to enhance your Discord experience!
 ## Features
 
 ### 🚧 Work In Progress:
-
-- **Gag Commands**: 
-  - Cricket
-  - Pokemon
-  - Dog
-  - Cat
-  - Bunny
-  - Hamster
-  - Mute
   
-- **Reaction Memes**: Reacts to messages at random with memes.
-  
-- **Gacha System**: Engage in a fun Gacha game and collect unique items.
+- **Reaction Memes**: Reacts to messages at random with memes. (Max 1 message per minute, along with not being guarenteed)
   
 - **News**:
   - Genshin Impact News
@@ -34,6 +23,8 @@ I aim to provide a multitude of features to enhance your Discord experience!
 - **Coin Flip**: A simple heads or tails game.
   
 - **Polls**: Create and participate in polls.
+
+- **Gag Command**: Gags the user and replaces the message with a response based on the gag type.
   
 - **Special Currency**: Currency system.
 
