@@ -5,6 +5,9 @@ const config = require('./config.json');
 const messageLogger = require('./passives/messageLogger');
 const checkAndReplaceBannedWords = require('./passives/checkGag');
 const currencyHandler = require('./passives/messageCurrency');
+const { DisTube } = require("distube");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
+const { SpotifyPlugin } = require("@distube/spotify");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildWebhooks, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildVoiceStates] });
 
@@ -103,17 +106,10 @@ client.on('messageCreate', async message => {
     currencyHandler.execute(message);
 });
 
-const Distube = require("distube");
-const YtDlpPlugin = require("@distube/yt-dlp").YtDlpPlugin;
-const SpotifyPlugin = require("@distube/spotify").SpotifyPlugin;
-
-client.distube = new Distube.default(client, {
-    leaveOnEmpty: true,
-    emptyCooldown: 30,
-    leaveOnFinish: false,
+client.distube = new DisTube(client, {
     emitNewSongOnly: true,
-    nsfw: true,
-    youtubeCookie: process.env.ytcookie,
+    emitAddSongWhenCreatingQueue: false,
+    emitAddListWhenCreatingQueue: false,
     plugins: [new SpotifyPlugin(), new YtDlpPlugin()]
 });
 
