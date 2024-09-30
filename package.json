@@ -24,6 +24,7 @@
     "distube": "^5.0.2",
     "genius-lyrics": "^4.4.7",
     "sqlite3": "^5.1.7",
+    "the-editor": "file:",
     "tweetnacl": "^1.0.3",
     "ytdl-core": "^4.11.5"
   },
