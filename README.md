@@ -7,10 +7,6 @@ I aim to provide a multitude of features to enhance your Discord experience!
 ### 🚧 Work In Progress:
   
 - **Reaction Memes**: Reacts to messages at random with memes. (Max 1 message per minute, along with not being guarenteed)
-  
-- **News**:
-  - Genshin Impact News
-  - Animethon/Otafest News
 
 ### ✅ Completed:
 
