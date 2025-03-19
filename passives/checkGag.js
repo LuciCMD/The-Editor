@@ -1,12 +1,5 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 const { EmbedBuilder } = require('@discordjs/builders');
-
-const dbPathGags = path.join(__dirname, '..', 'database', 'gags_db.sqlite');
-const dbGags = new sqlite3.Database(dbPathGags);
-
-const dbPathWords = path.join(__dirname, '..', 'database', 'badwords_db.sqlite');
-const dbWords = new sqlite3.Database(dbPathWords);
+const dbManager = require('../database/dbManager');
 
 async function checkAndReplaceBannedWords(author, channel, message) {
     if (!channel || typeof channel.send !== 'function') {
@@ -15,6 +8,10 @@ async function checkAndReplaceBannedWords(author, channel, message) {
 
     let messageContent = message.content;
     let messageAltered = false;
+
+    // Connect to databases
+    const dbWords = dbManager.getDatabase('badwords_db');
+    const dbGags = dbManager.getDatabase('gags_db');
 
     // Check for banned words
     const rows = await new Promise((resolve, reject) => {
@@ -32,6 +29,8 @@ async function checkAndReplaceBannedWords(author, channel, message) {
             }
         });
     }
+    
+    dbWords.close();
 
     // Check for gags
     const gag = await new Promise((resolve, reject) => {
@@ -61,6 +60,8 @@ async function checkAndReplaceBannedWords(author, channel, message) {
             messageAltered = true;
         }
     }
+    
+    dbGags.close();
 
     if (messageAltered) {
         try {

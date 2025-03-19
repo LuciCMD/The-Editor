@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const dbManager = require('../database/dbManager');
 
 module.exports = {
     data: {
@@ -13,8 +13,7 @@ module.exports = {
         const guildId = interaction.guild.id;
         
         // Connect to the database
-        const dbPath = path.join(__dirname, '..', 'database', 'reminders_db.sqlite');
-        const db = new sqlite3.Database(dbPath);
+        const db = dbManager.getDatabase('reminders_db');
         
         // Get all reminders created by the user in this guild
         db.all(

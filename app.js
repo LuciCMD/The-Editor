@@ -5,6 +5,7 @@ const config = require('./config.json');
 const messageLogger = require('./passives/messageLogger');
 const checkAndReplaceBannedWords = require('./passives/checkGag');
 const currencyHandler = require('./passives/messageCurrency');
+const dbManager = require('./database/dbManager');
 const { DisTube } = require("distube");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
 const { SpotifyPlugin } = require("@distube/spotify");
@@ -33,6 +34,19 @@ for (const dir of commandDirectories) {
         }
     }
 }
+
+dbManager.initializeDatabases()
+    .then(() => {
+        console.log('Databases initialized, starting bot...');
+        client.login(config.token).catch(error => {
+            console.error('Login error:', error);
+            process.exit(1);
+        });
+    })
+    .catch(error => {
+        console.error('Database initialization error:', error);
+        process.exit(1);
+    });
 
 const registerCommands = async () => {
     const rest = new REST({ version: '10' }).setToken(config.token);

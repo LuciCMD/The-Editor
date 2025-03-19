@@ -1,7 +1,6 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 const { AUTHORIZED_USERS } = require('../config.json');
+const dbManager = require('../database/dbManager');
 
 module.exports = {
     data: {
@@ -32,15 +31,14 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const word = interaction.options.getString('word');
 
-        const dbPath = path.join(__dirname, '..', 'database', 'badwords_db.sqlite');
-        const db = new sqlite3.Database(dbPath);
+        // Connect to the database
+        const db = dbManager.getDatabase('badwords_db');
 
         // Save to the database
         db.run("INSERT INTO banned_words (user_id, word) VALUES (?, ?)", [user.id, word], (err) => {
-            db.close(); // Close the database connection
-
             if (err) {
                 console.error('Error updating the database:', err);
+                db.close();
                 interaction.reply({ content: "An error occurred while updating the database.", ephemeral: true });
                 return;
             }
@@ -51,6 +49,7 @@ module.exports = {
                 .setColor(0xFF5733);
 
             interaction.reply({ embeds: [embed] });
+            db.close();
         });
     }
 };

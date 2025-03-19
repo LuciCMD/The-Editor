@@ -1,6 +1,8 @@
-const sqlite3 = require('sqlite3').verbose();
+// passives/reminderChecker.js
 const path = require('path');
 const { EmbedBuilder } = require('@discordjs/builders');
+const fs = require('fs');
+const dbManager = require('../database/dbManager');
 
 // Check for due reminders every minute
 const CHECK_INTERVAL = 60 * 1000; // 1 minute in milliseconds
@@ -21,8 +23,7 @@ function checkReminders(client) {
     const now = Math.floor(Date.now() / 1000); // Current time as Unix timestamp
     
     // Connect to the database
-    const dbPath = path.join(__dirname, '..', 'database', 'reminders_db.sqlite');
-    const db = new sqlite3.Database(dbPath);
+    const db = dbManager.getDatabase('reminders_db');
     
     // Get all reminders that should be triggered
     db.all("SELECT * FROM reminders WHERE next_trigger <= ?", [now], (err, reminders) => {
@@ -32,7 +33,7 @@ function checkReminders(client) {
             return;
         }
         
-        if (reminders.length === 0) {
+        if (!reminders || reminders.length === 0) {
             db.close();
             return;
         }
@@ -93,6 +94,7 @@ async function sendReminder(client, channelId, userIds, reminder) {
         const mentions = userIds.map(userId => `<@${userId}>`).join(' ');
         
         const reminderPath = 'attachment://reminder.png';
+        
         // Create the embed
         const embed = new EmbedBuilder()
             .setTitle(`Reminder: ${reminder.title}`)
@@ -101,10 +103,22 @@ async function sendReminder(client, channelId, userIds, reminder) {
             .setThumbnail(reminderPath)
             .setTimestamp();
         
+        // Check if reminder.png exists and create a fallback if it doesn't
+        const reminderImagePath = path.join(__dirname, '..', 'assets', 'reminder.png');
+        let files = [];
+        
+        try {
+            if (fs.existsSync(reminderImagePath)) {
+                files = [reminderImagePath];
+            }
+        } catch (err) {
+            console.error('Error checking for reminder.png:', err);
+        }
+        
         await channel.send({ 
             content: mentions, 
             embeds: [embed],
-            files: [path.join(__dirname, '..', 'assets', 'reminder.png')]
+            files: files.length > 0 ? [{ attachment: files[0], name: 'reminder.png' }] : []
         });
         
         return true;

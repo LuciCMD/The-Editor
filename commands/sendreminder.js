@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('@discordjs/builders');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { AUTHORIZED_USERS } = require('../config.json');
+const dbManager = require('../database/dbManager');
 
 module.exports = {
     data: {
@@ -37,8 +37,7 @@ module.exports = {
         }
 
         // Connect to the database
-        const dbPath = path.join(__dirname, '..', 'database', 'reminders_db.sqlite');
-        const db = new sqlite3.Database(dbPath);
+        const db = dbManager.getDatabase('reminders_db');
 
         // Update or insert the reminder settings
         db.run(
