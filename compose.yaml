@@ -12,9 +12,16 @@ services:
     ports:
       - 80:80
     container_name: Periwinkle # Set custom container name
+    restart: always # Enable automatic restart
     volumes:
       - db-data:/usr/src/app/database/data # Named volume for the database directory
       - log-data:/usr/src/app/logs # Named volume for the log directory
+    healthcheck: # Add healthcheck to ensure application is responding
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:80', res => res.statusCode === 200 ? process.exit(0) : process.exit(1))"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   # Example of defining a PostgreSQL database service
   # Uncomment the following lines to use a PostgreSQL database with your application
