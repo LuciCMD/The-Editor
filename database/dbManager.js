@@ -61,9 +61,39 @@ const schemas = {
 };
 
 // Initialize all databases
+async function initializeDatabases() {
+    console.log('Initializing all databases...');
+
+    // Ensure database and sqlite directories exist
+    const dbDir = path.join(__dirname);
+    const sqliteDir = path.join(__dirname, 'sqlite');
+
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+    }
+
+    if (!fs.existsSync(sqliteDir)) {
+        fs.mkdirSync(sqliteDir, { recursive: true });
+    }
+
+    // Initialize each database
+    for (const [dbName, schema] of Object.entries(schemas)) {
+        await initializeDatabase(dbName, schema);
+    }
+
+    console.log('All databases initialized successfully.');
+}
+
+// Initialize a specific database
 async function initializeDatabase(dbName, schema) {
     return new Promise((resolve, reject) => {
-        const dbPath = path.join(__dirname, `${dbName}.sqlite`);
+        // Create the sqlite directory if it doesn't exist
+        const sqliteDir = path.join(__dirname, 'sqlite');
+        if (!fs.existsSync(sqliteDir)) {
+            fs.mkdirSync(sqliteDir, { recursive: true });
+        }
+
+        const dbPath = path.join(sqliteDir, `${dbName}.sqlite`);
 
         // Create or open database
         const db = new sqlite3.Database(dbPath, (err) => {
@@ -131,70 +161,15 @@ async function initializeDatabase(dbName, schema) {
     });
 }
 
-// Initialize a specific database
-async function initializeDatabase(dbName, schema) {
-    return new Promise((resolve, reject) => {
-        const dbPath = path.join(__dirname, `${dbName}.sqlite`);
-
-        // Create or open database
-        const db = new sqlite3.Database(dbPath, (err) => {
-            if (err) {
-                console.error(`Error opening ${dbName} database:`, err);
-                reject(err);
-                return;
-            }
-
-            console.log(`Connected to ${dbName} database for initialization.`);
-
-            // Enable foreign keys
-            db.run('PRAGMA foreign_keys = ON', (err) => {
-                if (err) console.error('Error enabling foreign keys:', err);
-            });
-
-            // Create tables
-            db.serialize(() => {
-                if (typeof schema === 'string') {
-                    // Single table schema
-                    db.run(schema, (err) => {
-                        if (err) {
-                            console.error(`Error creating table in ${dbName}:`, err);
-                            reject(err);
-                            return;
-                        }
-                        console.log(`Table in ${dbName} checked/created.`);
-                    });
-                } else {
-                    // Multiple table schema
-                    for (const [tableName, tableSchema] of Object.entries(schema)) {
-                        db.run(tableSchema, (err) => {
-                            if (err) {
-                                console.error(`Error creating ${tableName} table in ${dbName}:`, err);
-                                reject(err);
-                                return;
-                            }
-                            console.log(`Table ${tableName} in ${dbName} checked/created.`);
-                        });
-                    }
-                }
-
-                // Close the database
-                db.close((err) => {
-                    if (err) {
-                        console.error(`Error closing ${dbName} database:`, err);
-                        reject(err);
-                        return;
-                    }
-                    console.log(`${dbName} database initialization completed.`);
-                    resolve();
-                });
-            });
-        });
-    });
-}
-
 // Get connection to a database
 function getDatabase(dbName) {
-    const dbPath = path.join(__dirname, `${dbName}.sqlite`);
+    // Create the sqlite directory if it doesn't exist
+    const sqliteDir = path.join(__dirname, 'sqlite');
+    if (!fs.existsSync(sqliteDir)) {
+        fs.mkdirSync(sqliteDir, { recursive: true });
+    }
+
+    const dbPath = path.join(sqliteDir, `${dbName}.sqlite`);
 
     // Create database directory if it doesn't exist
     const dbDir = path.dirname(dbPath);
