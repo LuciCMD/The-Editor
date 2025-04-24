@@ -149,20 +149,21 @@ module.exports = {
                 [title, description, interval.value, interval.unit, repeats, repeats === 0 ? null : repeats, interaction.user.id, interaction.guild.id, nextTrigger],
                 function(err) {
                     if (err) {
-                        console.error(err);
+                        console.error(`Error creating reminder:`, err);
                         db.close();
                         return interaction.reply({ 
                             content: "An error occurred while creating the reminder.", 
                             ephemeral: true 
                         });
                     }
-
+            
                     const reminderId = this.lastID;
-
+                    console.log(`Created new reminder ID ${reminderId} for user ${interaction.user.id}, next trigger at ${new Date(nextTrigger * 1000).toISOString()}`);
+            
                     // Add the creator to the users list
                     db.run("INSERT INTO reminder_users (reminder_id, user_id) VALUES (?, ?)", [reminderId, interaction.user.id], (err) => {
                         if (err) {
-                            console.error(err);
+                            console.error(`Error adding creator to reminder_users:`, err);
                         }
                     });
 

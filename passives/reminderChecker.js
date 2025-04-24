@@ -135,6 +135,8 @@ function updateReminder(db, reminder, callback) {
         const nextTrigger = calculateNextTrigger(reminder);
         const remaining = reminder.remaining_repeats === null ? null : reminder.remaining_repeats - 1;
         
+        console.log(`Updating reminder ${reminder.id}: Next trigger at ${new Date(nextTrigger * 1000).toISOString()}, Remaining repeats: ${remaining === null ? 'infinite' : remaining}`);
+        
         db.run(
             "UPDATE reminders SET next_trigger = ?, remaining_repeats = ? WHERE id = ?",
             [nextTrigger, remaining, reminder.id],
@@ -147,6 +149,7 @@ function updateReminder(db, reminder, callback) {
         );
     } else {
         // Delete the reminder if it's the last repeat
+        console.log(`Deleting reminder ${reminder.id} - No more repeats left`);
         db.run("DELETE FROM reminders WHERE id = ?", [reminder.id], (err) => {
             if (err) {
                 console.error(`Error deleting reminder ${reminder.id}:`, err);
