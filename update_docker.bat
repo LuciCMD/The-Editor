@@ -18,12 +18,18 @@ cls
 
 docker container inspect %ContainerName% >nul 2>&1
 @if %ERRORLEVEL% NEQ 0 (
-    @echo Error: Container "%ContainerName%" not found.
-    @echo Please check the container name and try again.
-    @goto end
+    @echo Container "%ContainerName%" not found or not running.
+    @echo Checking for stopped containers with the same name...
+    
+    docker ps -a --filter "name=%ContainerName%" --format "{{.ID}}" >nul 2>&1
+    @if %ERRORLEVEL% EQU 0 (
+        @echo Found stopped container. Will remove it before proceeding.
+    ) else (
+        @echo No container found with this name. Will create a new one.
+    )
+) else (
+    @echo Container found and running. Preparing to update...
 )
-
-@echo Container found. Preparing to update...
 @echo.
 
 @echo Do you want to backup your database and logs? (Y/N):
@@ -44,19 +50,36 @@ docker container inspect %ContainerName% >nul 2>&1
     @set BackupDate=%date:~-4%-%date:~4,2%-%date:~7,2%_%time:~0,2%-%time:~3,2%-%time:~6,2%
     @set BackupDate=%BackupDate: =0%
     
-    docker cp %ContainerName%:/usr/src/app/database "%BackupPath%\database_%BackupDate%"
-    docker cp %ContainerName%:/usr/src/app/logs "%BackupPath%\logs_%BackupDate%"
+    docker cp %ContainerName%:/usr/src/app/database "%BackupPath%\database_%BackupDate%" 2>nul
+    docker cp %ContainerName%:/usr/src/app/logs "%BackupPath%\logs_%BackupDate%" 2>nul
     
     @echo Backup completed at %BackupPath%
     @echo.
 
 :skip_backup
 @echo Stopping container...
-docker stop %ContainerName%
+docker stop %ContainerName% 2>nul
 
 @echo.
 @echo Removing container...
-docker rm %ContainerName%
+docker rm %ContainerName% 2>nul
+
+@echo.
+@echo Cleaning up unused Docker resources...
+@echo - Removing dangling images...
+docker image prune -f
+
+@echo - Removing unused containers...
+docker container prune -f
+
+@echo - Pruning build cache (optional, may take time)
+@echo Do you want to do a deep cleanup of build cache? (Y/N):
+@set /p DeepClean=
+@if /i "%DeepClean%"=="Y" (
+    docker builder prune -f
+) else (
+    @echo Skipping deep cleanup.
+)
 
 @echo.
 @echo Building new image with latest code...
@@ -75,6 +98,10 @@ docker ps --filter "name=%ContainerName%"
     @echo.
     @echo Status: Update Successful
     @echo The Editor has been updated and is now running.
+    
+    @echo.
+    @echo Container Disk Usage Information:
+    docker system df
 ) else (
     @echo.
     @echo Status: Error Detected
