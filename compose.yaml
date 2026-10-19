@@ -1,0 +1,56 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+services:
+  # Define your application as a service called "server".
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    env_file: .env # bot token and API keys, never baked into the image
+    ports:
+      - 3000:3000
+    container_name: Periwinkle # Set custom container name
+    restart: always # Enable automatic restart
+    volumes:
+      - db-data:/usr/src/app/database/sqlite # Named volume for the database directory
+      - log-data:/usr/src/app/logs # Named volume for the log directory
+    healthcheck: # Add healthcheck to ensure application is responding
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', res => res.statusCode === 200 ? process.exit(0) : process.exit(1))"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # Example of defining a PostgreSQL database service
+  # Uncomment the following lines to use a PostgreSQL database with your application
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   user: postgres
+  #   secrets:
+  #     - db-password
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_DB=example
+  #     - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+  #   expose:
+  #     - 5432
+  #   healthcheck:
+  #     test: [ "CMD", "pg_isready" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+# Define persistent volumes for the PostgreSQL database
+volumes:
+  db-data:
+  log-data:
+
+# Define secrets for the PostgreSQL database password
+# secrets:
+#   db-password:
+#     file: db/password.txt

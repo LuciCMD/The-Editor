@@ -1,0 +1,85 @@
+const { EmbedBuilder } = require('@discordjs/builders');
+const { ChannelType } = require('discord-api-types/v10');
+const { AUTHORIZED_USERS } = require('../utils/config');
+
+const activeCountdowns = new Map();
+
+module.exports = {
+  data: {
+    name: 'countdown',
+    description: 'Start a countdown to a specified time',
+    options: [
+      {
+        name: 'endtime',
+        type: 3,
+        description: 'End time for the countdown (YYYY-MM-DD HH:MM)',
+        required: true
+      }
+    ]
+  },
+
+  async execute(interaction) {
+    if (!AUTHORIZED_USERS.includes(interaction.user.id)) {
+      await interaction.reply({ content: "You are not authorized to use this command.", ephemeral: true });
+      return;
+    }
+
+    const endTimeString = interaction.options.getString('endtime');
+    const endTime = Date.parse(endTimeString + ':00Z');
+
+    if (isNaN(endTime)) {
+      await interaction.reply({ content: "Invalid time format. Please use YYYY-MM-DD HH:MM format in UTC.", ephemeral: true });
+      return;
+    }
+
+    if (endTime <= Date.now()) {
+      await interaction.reply({ content: "The specified time is in the past. Please enter a future time.", ephemeral: true });
+      return;
+    }
+
+    const countdownEmbed = new EmbedBuilder()
+      .setTitle("Countdown Timer")
+      .setDescription(`Countdown to ${endTimeString} (UTC)`)
+      .addFields({ name: "Time Left", value: "Calculating..." })
+      .setColor(0xFF5733);
+
+    let message;
+
+    if (interaction.channel.type === ChannelType.GuildText) {
+      message = await interaction.channel.send({ embeds: [countdownEmbed] });
+    } else {
+      message = await interaction.reply({ embeds: [countdownEmbed], fetchReply: true });
+    }
+
+    const interval = setInterval(async () => {
+      const now = Date.now();
+      const delta = endTime - now;
+
+      if (delta <= 0) {
+        clearInterval(interval);
+        activeCountdowns.delete(message.id);
+        countdownEmbed.setDescription(`The countdown to ${endTimeString} (UTC) has ended!`);
+        countdownEmbed.setFields({ name: "Time Left", value: `0h 0m 0s` });
+      } else {
+        const hours = Math.floor(delta / (1000 * 60 * 60));
+        const minutes = Math.floor((delta % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((delta % (1000 * 60)) / 1000);
+        countdownEmbed.setFields({ name: "Time Left", value: `${hours}h ${minutes}m ${seconds}s` });
+      }
+
+      message.edit({ embeds: [countdownEmbed] }).catch(error => {
+        if (error.code === 10008) {
+          clearInterval(interval);
+          activeCountdowns.delete(message.id);
+        }
+      });
+    }, 1000);
+
+    activeCountdowns.set(message.id, interval);
+  },
+
+  cleanup() {
+    activeCountdowns.forEach(interval => clearInterval(interval));
+    activeCountdowns.clear();
+  }
+};

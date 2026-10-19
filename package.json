@@ -1,0 +1,36 @@
+{
+  "name": "the-editor",
+  "version": "4.0.0",
+  "description": "An ancient, sentient machine that can help you with everyday tasks.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env app.js",
+    "dev": "node --env-file=.env.test app.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "keywords": [],
+  "author": "LuciCMD",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "dependencies": {
+    "@discordjs/builders": "^1.14.1",
+    "@discordjs/opus": "^0.10.0",
+    "@discordjs/rest": "^2.6.1",
+    "@discordjs/voice": "^0.19.2",
+    "@distube/spotify": "^2.0.2",
+    "@distube/yt-dlp": "^2.0.1",
+    "@distube/ytsr": "^2.0.4",
+    "axios": "^1.18.0",
+    "discord-api-types": "^0.38.48",
+    "discord.js": "^14.26.4",
+    "distube": "^5.2.3",
+    "genius-lyrics": "^4.4.7",
+    "sqlite3": "^6.0.1",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
